@@ -1,0 +1,159 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+@plugin '@tailwindcss/typography';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-heading: var(--font-fraunces), 'Georgia', serif;
+  --font-serif: var(--font-fraunces), 'Georgia', serif;
+  --font-sans: var(--font-inter), 'system-ui', sans-serif;
+  --font-mono: var(--font-plex-mono), 'ui-monospace', monospace;
+
+  /* Green Land brand palette */
+  --color-deep: var(--deep);
+  --color-leaf: var(--leaf);
+  --color-soil: var(--soil);
+  --color-gold: var(--gold);
+  --color-sage: var(--sage);
+
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  /* Brand colors */
+  --deep: #226b3a;
+  --leaf: #38a05c;
+  --soil: #6b4226;
+  --gold: #d9a640;
+  --sage: #dce8dc;
+
+  --background: #f7f4ec;
+  --foreground: #20251f;
+  --card: #ffffff;
+  --card-foreground: #20251f;
+  --popover: #ffffff;
+  --popover-foreground: #20251f;
+  --primary: #226b3a;
+  --primary-foreground: #f7f4ec;
+  --secondary: #dce8dc;
+  --secondary-foreground: #226b3a;
+  --muted: #e9e4d6;
+  --muted-foreground: #5b6157;
+  --accent: #d9a640;
+  --accent-foreground: #20251f;
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: #d8d2c2;
+  --input: #d8d2c2;
+  --ring: #38a05c;
+  --chart-1: #38a05c;
+  --chart-2: #d9a640;
+  --chart-3: #6b4226;
+  --chart-4: #226b3a;
+  --chart-5: #9bb38e;
+  --radius: 0.625rem;
+  --sidebar: #f7f4ec;
+  --sidebar-foreground: #20251f;
+  --sidebar-primary: #226b3a;
+  --sidebar-primary-foreground: #f7f4ec;
+  --sidebar-accent: #dce8dc;
+  --sidebar-accent-foreground: #226b3a;
+  --sidebar-border: #d8d2c2;
+  --sidebar-ring: #38a05c;
+}
+
+.dark {
+  --background: #161c16;
+  --foreground: #f7f4ec;
+  --card: #1f2a20;
+  --card-foreground: #f7f4ec;
+  --popover: #1f2a20;
+  --popover-foreground: #f7f4ec;
+  --primary: #dce8dc;
+  --primary-foreground: #226b3a;
+  --secondary: #28332a;
+  --secondary-foreground: #f7f4ec;
+  --muted: #28332a;
+  --muted-foreground: #a9b3a5;
+  --accent: #d9a640;
+  --accent-foreground: #20251f;
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: #38a05c;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar while keeping scroll functionality */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Below-hero content sits above the background 3D tractor. Make empty/transparent
+     areas click-through so the tractor can be grabbed, while real UI stays interactive. */
+  .below-hero-content { pointer-events: none; }
+  .below-hero-content a,
+  .below-hero-content button,
+  .below-hero-content input,
+  .below-hero-content label { pointer-events: auto; }
+
+  /* Organic blob mask shapes for product/category images */
+  .blob-1 {
+    border-radius: 62% 38% 46% 54% / 60% 49% 51% 40%;
+  }
+  .blob-2 {
+    border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+  }
+  .blob-3 {
+    border-radius: 50% 50% 38% 62% / 55% 45% 55% 45%;
+  }
+}

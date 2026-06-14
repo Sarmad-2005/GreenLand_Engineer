@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sleep 15 && cat /tmp/nextjs-dev.log)",
+      "Read(//private/tmp/**)"
+    ]
+  }
+}
