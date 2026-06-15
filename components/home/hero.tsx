@@ -49,7 +49,7 @@ export function Hero() {
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: d(0.3) }}
-          className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-gold [text-shadow:0_1px_8px_rgba(20,37,31,0.5)]"
+          className="inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-deep [text-shadow:0_1px_8px_rgba(247,244,236,0.95)]"
         >
           <span className="inline-block size-1.5 animate-pulse rounded-full bg-leaf" />
           Agricultural Machinery Manufacturing
@@ -94,7 +94,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: d(1.5) }}
-          className="mx-auto mt-6 hidden max-w-md text-pretty text-base leading-relaxed text-deep/80 [text-shadow:0_1px_12px_rgba(247,244,236,0.9)] sm:block"
+          className="mx-auto mt-6 hidden max-w-md text-pretty text-base font-bold leading-relaxed text-gold [text-shadow:0_1px_10px_rgba(20,37,31,0.6)] sm:block"
         >
           Precision tillage, seeding, harvesting and post-harvest machinery — engineered for
           farmers across&nbsp;60+ countries.
