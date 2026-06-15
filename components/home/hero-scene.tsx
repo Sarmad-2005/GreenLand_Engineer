@@ -35,71 +35,171 @@ const easeInOut = (t: number) =>
 const clamp01 = (t: number) => Math.min(1, Math.max(0, t))
 
 /* ------------------------------------------------------------------ *
- * Grass / rice field — instanced blades with a wind + growth shader
+ * Wheat field — instanced crossed quads textured with a wheat stalk,
+ * swaying on the same wind + growth shader the grass used.
  * ------------------------------------------------------------------ */
-const GRASS_COUNT = 5200
+const WHEAT_COUNT = 2600
 
-const grassVertex = /* glsl */ `
+// One realistic wheat stalk drawn onto a transparent canvas: straw stem,
+// a two-row grain ear of overlapping kernels, and fine awns fanning up.
+function makeWheatTexture() {
+  const c = document.createElement('canvas')
+  c.width = 96
+  c.height = 256
+  const ctx = c.getContext('2d')!
+  const cx = c.width / 2
+
+  // helper coords: y=0 top (ear), y=height bottom (root)
+  // Stem — straw gold, tapering slightly toward the ear
+  const stemGrad = ctx.createLinearGradient(0, 110, 0, 256)
+  stemGrad.addColorStop(0, '#c8a23a')
+  stemGrad.addColorStop(1, '#b8902f')
+  ctx.strokeStyle = stemGrad
+  ctx.lineCap = 'round'
+  ctx.lineWidth = 6
+  ctx.beginPath()
+  ctx.moveTo(cx, 118)
+  ctx.lineTo(cx, 252)
+  ctx.stroke()
+
+  // Awns — fine pale-gold bristles fanning up out of the ear top
+  ctx.strokeStyle = 'rgba(230,210,130,0.55)'
+  ctx.lineWidth = 2
+  for (let i = -3; i <= 3; i++) {
+    ctx.beginPath()
+    ctx.moveTo(cx, 96)
+    ctx.lineTo(cx + i * 7, 18 + Math.abs(i) * 6)
+    ctx.stroke()
+  }
+
+  // Grain ear — two staggered rows of overlapping kernels (highlight/mid/shadow)
+  const kernel = (x: number, y: number, rot: number) => {
+    ctx.save()
+    ctx.translate(x, y)
+    ctx.rotate(rot)
+    const g = ctx.createLinearGradient(-8, 0, 8, 0)
+    g.addColorStop(0, '#9c7322')
+    g.addColorStop(0.5, '#c8a23a')
+    g.addColorStop(1, '#e6c662')
+    ctx.fillStyle = g
+    ctx.beginPath()
+    ctx.ellipse(0, 0, 7, 12, 0, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.restore()
+  }
+  for (let r = 0; r < 8; r++) {
+    const y = 100 - r * 11
+    kernel(cx - 7, y, -0.32)
+    kernel(cx + 7, y - 5, 0.32)
+  }
+
+  const tex = new THREE.CanvasTexture(c)
+  tex.colorSpace = THREE.SRGBColorSpace
+  tex.anisotropy = 4
+  return tex
+}
+
+// Two crossed quads (one rotated 90° about Y) merged into a single geometry so
+// each instance stays visible from any camera angle. Root pivot at y=0, top at y=H.
+function makeWheatGeometry() {
+  const W = 0.22
+  const H = 1.3
+  const hw = W / 2
+  // positions / uvs / normals for two quads (4 verts each), indexed
+  const pos: number[] = []
+  const uv: number[] = []
+  const nor: number[] = []
+  const idx: number[] = []
+  const addQuad = (axis: 'x' | 'z', n: [number, number, number]) => {
+    const base = pos.length / 3
+    // bottom-left, bottom-right, top-right, top-left
+    const corners: [number, number][] = [
+      [-hw, 0],
+      [hw, 0],
+      [hw, H],
+      [-hw, H],
+    ]
+    const uvs: [number, number][] = [
+      [0, 0],
+      [1, 0],
+      [1, 1],
+      [0, 1],
+    ]
+    for (let i = 0; i < 4; i++) {
+      const [a, y] = corners[i]
+      if (axis === 'x') pos.push(a, y, 0)
+      else pos.push(0, y, a)
+      uv.push(uvs[i][0], uvs[i][1])
+      nor.push(n[0], n[1], n[2])
+    }
+    idx.push(base, base + 1, base + 2, base, base + 2, base + 3)
+  }
+  addQuad('x', [0, 0, 1])
+  addQuad('z', [1, 0, 0])
+  const g = new THREE.BufferGeometry()
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3))
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2))
+  g.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3))
+  g.setIndex(idx)
+  return g
+}
+
+const wheatVertex = /* glsl */ `
   uniform float uTime;
   uniform float uGrow;
   uniform float uWind;
-  varying float vH;
+  varying vec2 vUv;
 
   void main() {
+    vUv = uv;
     vec3 ipos = vec3(instanceMatrix[3][0], instanceMatrix[3][1], instanceMatrix[3][2]);
 
-    // per-blade random so the field grows in a soft, staggered wave
+    // per-stalk random so the field grows in a soft, staggered wave
     float rnd = fract(sin(dot(ipos.xz, vec2(12.9898, 78.233))) * 43758.5453);
     float g = clamp((uGrow - rnd * 0.35) / 0.65, 0.0, 1.0);
     g = smoothstep(0.0, 1.0, g);
 
+    float h = uv.y;             // 0 at root, 1 at the ear
     vec3 pos = position;
-    vH = position.y;            // 0 at root, 1 at tip
     pos.y *= g;                 // grow up out of the ground
 
-    // light breeze — tip sways more than the root
-    float bend = vH * vH * uWind * g;
-    float w = sin(uTime * 1.5 + ipos.x * 0.5 + ipos.z * 0.6)
-            + 0.5 * sin(uTime * 2.7 + ipos.z * 0.9);
+    // heavier, slower sway than grass — the loaded ear drags the tip
+    float bend = h * h * uWind * g;
+    float w = sin(uTime * 1.1 + ipos.x * 0.5 + ipos.z * 0.6)
+            + 0.5 * sin(uTime * 1.9 + ipos.z * 0.9);
     pos.x += w * bend;
-    pos.z += 0.4 * cos(uTime * 1.2 + ipos.x * 0.7) * bend;
+    pos.z += 0.4 * cos(uTime * 0.9 + ipos.x * 0.7) * bend;
 
     gl_Position = projectionMatrix * modelViewMatrix * instanceMatrix * vec4(pos, 1.0);
   }
 `
 
-const grassFragment = /* glsl */ `
-  uniform vec3 uBase;
-  uniform vec3 uTip;
-  varying float vH;
+const wheatFragment = /* glsl */ `
+  uniform sampler2D uMap;
+  varying vec2 vUv;
 
   void main() {
-    vec3 col = mix(uBase, uTip, smoothstep(0.0, 1.0, vH));
-    gl_FragColor = vec4(col, 1.0);
+    vec4 t = texture2D(uMap, vUv);
+    if (t.a < 0.4) discard;     // alpha-cut the stalk silhouette (no blending/sort)
+    gl_FragColor = vec4(t.rgb, 1.0);
   }
 `
 
-function RiceField({ animate }: { animate: boolean }) {
+function WheatField({ animate }: { animate: boolean }) {
   const meshRef = useRef<THREE.InstancedMesh>(null)
-
-  const geometry = useMemo(() => {
-    const g = new THREE.PlaneGeometry(0.075, 1, 1, 5)
-    g.translate(0, 0.5, 0) // pivot at the root
-    return g
-  }, [])
+  const geometry = useMemo(() => makeWheatGeometry(), [])
 
   const material = useMemo(
     () =>
       new THREE.ShaderMaterial({
-        vertexShader: grassVertex,
-        fragmentShader: grassFragment,
+        vertexShader: wheatVertex,
+        fragmentShader: wheatFragment,
         side: THREE.DoubleSide,
         uniforms: {
           uTime: { value: 0 },
           uGrow: { value: animate ? 0 : 1 },
-          uWind: { value: 0.16 },
-          uBase: { value: new THREE.Color('#2f6e2c') },
-          uTip: { value: new THREE.Color('#7ec24c') },
+          uWind: { value: 0.13 },
+          uMap: { value: makeWheatTexture() },
         },
       }),
     [animate],
@@ -109,11 +209,11 @@ function RiceField({ animate }: { animate: boolean }) {
     const mesh = meshRef.current
     if (!mesh) return
     const dummy = new THREE.Object3D()
-    for (let i = 0; i < GRASS_COUNT; i++) {
+    for (let i = 0; i < WHEAT_COUNT; i++) {
       const x = THREE.MathUtils.randFloatSpread(27)
       const z = -13 + Math.random() * 16
-      const h = 0.55 + Math.random() * 0.85
-      const w = 0.7 + Math.random() * 0.6
+      const h = 0.9 + Math.random() * 0.7
+      const w = 0.7 + Math.random() * 0.5
       dummy.position.set(x, 0, z)
       dummy.rotation.set(0, Math.random() * Math.PI, 0)
       dummy.scale.set(w, h, w)
@@ -131,12 +231,7 @@ function RiceField({ animate }: { animate: boolean }) {
     material.uniforms.uGrow.value = clamp01((t - T_GROW_START) / T_GROW_DUR)
   })
 
-  return (
-    <instancedMesh
-      ref={meshRef}
-      args={[geometry, material, GRASS_COUNT]}
-    />
-  )
+  return <instancedMesh ref={meshRef} args={[geometry, material, WHEAT_COUNT]} />
 }
 
 /* ------------------------------------------------------------------ *
@@ -339,22 +434,41 @@ function makeRadialTexture() {
   return tex
 }
 
-function makeBirdTexture() {
-  const c = document.createElement('canvas')
-  c.width = c.height = 64
-  const ctx = c.getContext('2d')!
-  ctx.strokeStyle = 'rgba(22,30,24,1)'
-  ctx.lineWidth = 9
-  ctx.lineCap = 'round'
-  ctx.lineJoin = 'round'
+// A filled gull silhouette drawn at a given wing position. `lift` in [-1,1]
+// raises (-) or lowers (+) the wingtips; cycling a few of these reads as a flap.
+function drawBird(ctx: CanvasRenderingContext2D, lift: number) {
+  const w = 128
+  const cx = w / 2
+  const cy = w * 0.46
+  const span = 52 // half wingspan
+  const tipY = cy - lift * 30 // wingtip height relative to the body
+  const elbowY = cy - lift * 14
+  ctx.fillStyle = '#2a2f2b'
   ctx.beginPath()
-  ctx.moveTo(4, 42)
-  ctx.quadraticCurveTo(22, 14, 32, 32) // left wing
-  ctx.quadraticCurveTo(42, 14, 60, 42) // right wing
-  ctx.stroke()
-  const tex = new THREE.CanvasTexture(c)
-  tex.colorSpace = THREE.SRGBColorSpace
-  return tex
+  // start at left tip, sweep through the body, out to the right tip and back,
+  // giving each wing a swept-back trailing edge (gull shape)
+  ctx.moveTo(cx - span, tipY)
+  ctx.quadraticCurveTo(cx - span * 0.5, elbowY - 4, cx - 6, cy + 2) // left leading edge
+  ctx.quadraticCurveTo(cx, cy + 7, cx + 6, cy + 2) // body underside
+  ctx.quadraticCurveTo(cx + span * 0.5, elbowY - 4, cx + span, tipY) // right leading edge
+  ctx.quadraticCurveTo(cx + span * 0.5, elbowY + 8, cx + 4, cy + 9) // right trailing edge
+  ctx.quadraticCurveTo(cx, cy + 12, cx - 4, cy + 9) // tail notch
+  ctx.quadraticCurveTo(cx - span * 0.5, elbowY + 8, cx - span, tipY) // left trailing edge
+  ctx.closePath()
+  ctx.fill()
+}
+
+// Wing-position keyframes for the flap cycle (down → level → up → level).
+function makeBirdFrames(): THREE.CanvasTexture[] {
+  const lifts = [-0.9, -0.2, 0.85, -0.2]
+  return lifts.map((lift) => {
+    const c = document.createElement('canvas')
+    c.width = c.height = 128
+    drawBird(c.getContext('2d')!, lift)
+    const tex = new THREE.CanvasTexture(c)
+    tex.colorSpace = THREE.SRGBColorSpace
+    return tex
+  })
 }
 
 type CloudDef = {
@@ -436,17 +550,32 @@ function SkyClouds({ animate }: { animate: boolean }) {
   )
 }
 
-type BirdDef = { x: number; y: number; z: number; scale: number; speed: number; phase: number }
+type BirdDef = {
+  x: number
+  y: number
+  z: number
+  scale: number
+  speed: number
+  phase: number
+  flap: number // wingbeats per second
+}
+// Two loose V-formations gliding across the sky at different depths/heights.
 const BIRDS: BirdDef[] = [
-  { x: -10, y: 7.4, z: -11, scale: 1.5, speed: 1.9, phase: 0 },
-  { x: -5, y: 8.0, z: -12, scale: 1.2, speed: 2.1, phase: 0.7 },
-  { x: -14, y: 6.8, z: -10, scale: 1.4, speed: 1.7, phase: 1.4 },
-  { x: 3, y: 8.4, z: -12, scale: 1.1, speed: 2.3, phase: 2.1 },
+  // lead V (higher)
+  { x: -10, y: 8.4, z: -12, scale: 1.5, speed: 1.9, phase: 0.0, flap: 2.6 },
+  { x: -12.4, y: 8.0, z: -12, scale: 1.2, speed: 1.9, phase: 0.5, flap: 2.6 },
+  { x: -7.6, y: 8.0, z: -12, scale: 1.2, speed: 1.9, phase: 0.9, flap: 2.6 },
+  // trailing pair (lower, nearer, slightly faster)
+  { x: 4, y: 7.0, z: -10, scale: 1.6, speed: 2.3, phase: 1.6, flap: 3.0 },
+  { x: 1.6, y: 6.7, z: -10, scale: 1.3, speed: 2.3, phase: 2.1, flap: 3.0 },
+  // a lone high one drifting slower
+  { x: -3, y: 9.3, z: -14, scale: 1.0, speed: 1.5, phase: 3.0, flap: 2.2 },
 ]
 
 function Birds({ animate }: { animate: boolean }) {
-  const tex = useMemo(() => makeBirdTexture(), [])
+  const frames = useMemo(() => makeBirdFrames(), [])
   const refs = useRef<THREE.Sprite[]>([])
+  const mats = useRef<THREE.SpriteMaterial[]>([])
 
   useFrame((state) => {
     if (!animate) return
@@ -454,14 +583,18 @@ function Birds({ animate }: { animate: boolean }) {
     refs.current.forEach((s, i) => {
       if (!s) return
       const def = BIRDS[i]
-      const span = 40
+      const span = 44
       let x = def.x + t * def.speed
-      x = (((x + 20) % span) + span) % span - 20
+      x = (((x + 22) % span) + span) % span - 22
       s.position.x = x
-      s.position.y = def.y + Math.sin(t * 1.3 + def.phase) * 0.4
-      // gentle "flap" by squashing the wings vertically
-      const flap = 0.55 + Math.abs(Math.sin(t * 6 + def.phase)) * 0.45
-      s.scale.set(def.scale, def.scale * flap, 1)
+      s.position.y = def.y + Math.sin(t * 1.1 + def.phase) * 0.45 // gentle glide
+      const mat = mats.current[i]
+      if (mat) {
+        // cycle the wing-position frames to flap
+        mat.map = frames[Math.floor(t * def.flap + def.phase * 2) % frames.length]
+        mat.rotation = Math.sin(t * 0.9 + def.phase) * 0.12 // subtle banking
+        mat.needsUpdate = true
+      }
     })
   })
 
@@ -474,9 +607,16 @@ function Birds({ animate }: { animate: boolean }) {
             if (el) refs.current[i] = el
           }}
           position={[def.x, def.y, def.z]}
-          scale={[def.scale, def.scale * 0.7, 1]}
+          scale={[def.scale, def.scale, 1]}
         >
-          <spriteMaterial map={tex} transparent depthWrite={false} />
+          <spriteMaterial
+            ref={(m) => {
+              if (m) mats.current[i] = m
+            }}
+            map={frames[1]}
+            transparent
+            depthWrite={false}
+          />
         </sprite>
       ))}
     </>
@@ -490,7 +630,7 @@ function Ground() {
   return (
     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
       <planeGeometry args={[200, 200]} />
-      <meshStandardMaterial color="#6f7d44" roughness={1} />
+      <meshStandardMaterial color="#9c8f4e" roughness={1} />
     </mesh>
   )
 }
@@ -536,7 +676,7 @@ export default function HeroScene({ reduce = false }: { reduce?: boolean }) {
 
       <Suspense fallback={null}>
         <Tractor animate={animate} />
-        <RiceField animate={animate} />
+        <WheatField animate={animate} />
         <Ground />
         <SkyClouds animate={animate} />
         <Birds animate={animate} />
