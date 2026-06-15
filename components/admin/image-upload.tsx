@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import Image from 'next/image'
 import { toast } from 'sonner'
 import { UploadCloud, X, Loader2 } from 'lucide-react'
+import { compressImageToWebp } from '@/lib/image-client'
 
 type SingleProps = {
   multiple?: false
@@ -34,8 +35,9 @@ export function ImageUpload(props: Props) {
     if (list.length === 0) return
     setBusy(true)
     try {
+      const compressed = await Promise.all(list.map(compressImageToWebp))
       const form = new FormData()
-      for (const f of list) form.append('file', f)
+      for (const f of compressed) form.append('file', f)
       const res = await fetch('/api/upload', {
         method: 'POST',
         body: form,
