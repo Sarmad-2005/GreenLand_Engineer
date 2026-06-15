@@ -120,6 +120,7 @@ model News {
   author          String?
   publicationDate DateTime    @default(now())
   status          Status      @default(ACTIVE)
+  notifiedAt      DateTime?   // set once subscribers have been emailed about this post
   categoryId      String?
   category        Category?   @relation(fields: [categoryId], references: [id])
   images          NewsImage[]
@@ -151,6 +152,7 @@ model Blog {
   seoDescription String?
   featured       Boolean    @default(false)
   status         Status     @default(ACTIVE)
+  notifiedAt     DateTime?  // set once subscribers have been emailed about this post
   publishedAt    DateTime   @default(now())
   categoryId     String?
   category       Category?  @relation(fields: [categoryId], references: [id])
@@ -185,4 +187,30 @@ model Testimonial {
   updatedAt DateTime  @updatedAt
 
   @@index([status])
+}
+
+// Contact Us form submissions — emailed to the company and shown in the admin inbox.
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  company   String?
+  product   String? // category slug picked in the form's "Product of Interest" select
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+// Newsletter subscribers — emailed whenever a News item or Blog post is published.
+model Subscriber {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  token          String    @unique @default(cuid()) // unguessable unsubscribe token
+  unsubscribedAt DateTime? // null = active subscriber
+  createdAt      DateTime  @default(now())
+
+  @@index([unsubscribedAt])
 }

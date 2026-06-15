@@ -5,6 +5,7 @@ import { handler, ok, created, parseListQuery, paginated } from '@/lib/api'
 import { requirePermission } from '@/lib/auth/session'
 import { newsCreateSchema } from '@/lib/validators/news'
 import { uniqueSlug } from '@/lib/slug'
+import { maybeNotifyForPost } from '@/lib/email'
 
 const SORTABLE = new Set(['title', 'publicationDate', 'createdAt', 'status', 'type'])
 
@@ -61,6 +62,16 @@ export const POST = handler(async (req: NextRequest) => {
       status: input.status,
       images: { create: (input.images ?? []).map((path) => ({ path })) },
     },
+  })
+
+  await maybeNotifyForPost({
+    kind: 'news',
+    id: item.id,
+    status: item.status,
+    notifiedAt: item.notifiedAt,
+    title: item.title,
+    summary: item.summary,
+    slug: item.slug,
   })
 
   return created(item)

@@ -11,6 +11,7 @@ import {
   Newspaper,
   FileText,
   MessageSquareQuote,
+  Inbox,
   Users,
   Leaf,
   Menu,
@@ -35,6 +36,7 @@ const NAV: NavItem[] = [
   { href: '/admin/news', label: 'News', icon: Newspaper, permission: 'news:manage' },
   { href: '/admin/blogs', label: 'Blogs', icon: FileText, permission: 'blogs:manage' },
   { href: '/admin/testimonials', label: 'Testimonials', icon: MessageSquareQuote, permission: 'testimonials:manage' },
+  { href: '/admin/messages', label: 'Messages', icon: Inbox, permission: 'messages:manage' },
   { href: '/admin/users', label: 'Admins', icon: Users, permission: 'users:manage' },
 ]
 

@@ -33,6 +33,39 @@ function FloatingField({
 
 export function ContactForm() {
   const [sent, setSent] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setError(null)
+    setSending(true)
+    const fd = new FormData(e.currentTarget)
+    const payload = {
+      name: String(fd.get('name') || ''),
+      email: String(fd.get('email') || ''),
+      phone: String(fd.get('phone') || ''),
+      company: String(fd.get('company') || ''),
+      product: String(fd.get('product') || ''),
+      message: String(fd.get('message') || ''),
+    }
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      if (!res.ok) {
+        const body = await res.json().catch(() => null)
+        throw new Error(body?.error || 'Something went wrong. Please try again.')
+      }
+      setSent(true)
+    } catch (err) {
+      setError((err as Error).message || 'Could not send your message. Please try again.')
+    } finally {
+      setSending(false)
+    }
+  }
 
   return (
     <div className="rounded-3xl bg-card p-8 shadow-sm md:p-10">
@@ -93,10 +126,7 @@ export function ContactForm() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onSubmit={(e) => {
-              e.preventDefault()
-              setSent(true)
-            }}
+            onSubmit={handleSubmit}
             className="flex flex-col gap-4"
           >
             <div className="grid gap-4 sm:grid-cols-2">
@@ -137,11 +167,18 @@ export function ContactForm() {
               </label>
             </div>
 
+            {error && (
+              <p className="text-sm text-red-600" role="alert">
+                {error}
+              </p>
+            )}
+
             <button
               type="submit"
-              className="mt-2 rounded-full bg-gold px-8 py-4 font-mono text-sm font-medium text-deep transition-transform hover:scale-[1.02]"
+              disabled={sending}
+              className="mt-2 rounded-full bg-gold px-8 py-4 font-mono text-sm font-medium text-deep transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Send Message
+              {sending ? 'Sending…' : 'Send Message'}
             </button>
           </motion.form>
         )}

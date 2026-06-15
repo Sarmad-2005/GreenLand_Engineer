@@ -4,6 +4,7 @@ import { handler, ok, fail } from '@/lib/api'
 import { requirePermission } from '@/lib/auth/session'
 import { blogUpdateSchema } from '@/lib/validators/blog'
 import { uniqueSlug } from '@/lib/slug'
+import { maybeNotifyForPost } from '@/lib/email'
 
 type Ctx = { params: Promise<{ id: string }> }
 
@@ -50,6 +51,16 @@ export const PATCH = handler(async (req: NextRequest, { params }: Ctx) => {
         ? { images: { deleteMany: {}, create: input.images.map((path) => ({ path })) } }
         : {}),
     },
+  })
+
+  await maybeNotifyForPost({
+    kind: 'blog',
+    id: blog.id,
+    status: blog.status,
+    notifiedAt: blog.notifiedAt,
+    title: blog.title,
+    summary: blog.excerpt,
+    slug: blog.slug,
   })
 
   return ok(blog)

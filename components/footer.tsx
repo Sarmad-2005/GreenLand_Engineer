@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Phone, Mail, MapPin } from 'lucide-react'
@@ -67,6 +68,69 @@ const socials = socialLinks.map((s) => ({
   Icon: socialIcons[s.key],
 }))
 
+function NewsletterForm() {
+  const [email, setEmail] = useState('')
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
+  const [error, setError] = useState<string | null>(null)
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setStatus('sending')
+    setError(null)
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      if (!res.ok) {
+        const body = await res.json().catch(() => null)
+        throw new Error(body?.error || 'Could not subscribe. Please try again.')
+      }
+      setStatus('success')
+      setEmail('')
+    } catch (err) {
+      setStatus('error')
+      setError((err as Error).message)
+    }
+  }
+
+  if (status === 'success') {
+    return (
+      <p className="mt-4 max-w-sm rounded-full bg-gold/15 px-4 py-2.5 text-sm text-background">
+        Thanks for subscribing! A welcome email is on its way.
+      </p>
+    )
+  }
+
+  return (
+    <form onSubmit={onSubmit} className="mt-4 max-w-sm">
+      <div className="flex gap-2">
+        <label htmlFor="footer-email" className="sr-only">
+          Email address
+        </label>
+        <input
+          id="footer-email"
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@farm.com"
+          className="min-w-0 flex-1 rounded-full border border-background/25 bg-card px-4 py-2 text-sm text-deep placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-gold"
+        />
+        <button
+          type="submit"
+          disabled={status === 'sending'}
+          className="shrink-0 rounded-full bg-gold px-4 py-2 font-mono text-sm font-medium text-deep transition-transform hover:scale-105 disabled:opacity-60"
+        >
+          {status === 'sending' ? '…' : 'Subscribe'}
+        </button>
+      </div>
+      {error && <p className="mt-2 text-xs text-red-300">{error}</p>}
+    </form>
+  )
+}
+
 export function Footer() {
   return (
     <footer className="border-t border-deep bg-deep text-background">
@@ -85,27 +149,7 @@ export function Footer() {
               />
             </Link>
 
-            <form
-              onSubmit={(e) => e.preventDefault()}
-              className="mt-4 flex max-w-sm gap-2"
-            >
-              <label htmlFor="footer-email" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="footer-email"
-                type="email"
-                required
-                placeholder="you@farm.com"
-                className="min-w-0 flex-1 rounded-full border border-background/25 bg-card px-4 py-2 text-sm text-deep placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-gold"
-              />
-              <button
-                type="submit"
-                className="shrink-0 rounded-full bg-gold px-4 py-2 font-mono text-sm font-medium text-deep transition-transform hover:scale-105"
-              >
-                Subscribe
-              </button>
-            </form>
+            <NewsletterForm />
 
             <p className="mt-4 text-sm leading-relaxed text-background/70">
               {company.blurb}
