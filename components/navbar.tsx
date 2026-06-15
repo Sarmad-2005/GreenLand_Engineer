@@ -30,14 +30,26 @@ export function Navbar() {
       }`}
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-8">
-        <Link href="/" className="flex items-center" aria-label="Green Land Engineers — home">
+        <Link href="/" className="flex items-center gap-2 md:gap-2.5" aria-label="Green Land Engineers — home">
+          {/* Logo mark (favicon) — always visible */}
           <Image
-            src="/navbarlogo1.webp"
-            alt="Green Land Engineers"
-            width={221}
+            src="/logo-mark.png"
+            alt=""
+            width={40}
             height={40}
             priority
             className={`h-8 w-auto md:h-10 ${
+              scrolled ? 'drop-shadow-[0_1px_2px_rgba(247,244,236,0.45)]' : ''
+            }`}
+          />
+          {/* Wordmark — desktop only */}
+          <Image
+            src="/navbarlogo1.webp"
+            alt=""
+            width={221}
+            height={40}
+            priority
+            className={`hidden h-8 w-auto md:block md:h-10 ${
               scrolled ? 'drop-shadow-[0_1px_2px_rgba(247,244,236,0.45)]' : ''
             }`}
           />
