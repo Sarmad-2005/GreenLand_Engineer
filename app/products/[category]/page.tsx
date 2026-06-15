@@ -34,11 +34,24 @@ export default async function CategoryPage({
 
   const products = await getCategoryProductsBySlug(category)
 
+  // A few distinct product images from this category to float in the hero
+  // (fall back to the category gallery/cover so it's never empty).
+  const heroImages = Array.from(
+    new Set(
+      [...products.flatMap((p) => p.images), ...(cat.gallery ?? []), cat.image].filter(
+        Boolean,
+      ) as string[],
+    ),
+  ).slice(0, 4)
+
   return (
     <>
       <Navbar />
       <main>
-        <ParallaxBanner image={cat.image || '/placeholder.svg'} title={cat.name} />
+        <ParallaxBanner
+          images={heroImages.length ? heroImages : ['/placeholder.svg']}
+          title={cat.name}
+        />
         <div className="mx-auto max-w-7xl px-5 py-12 md:px-8 md:py-16">
           <Breadcrumb
             items={[
