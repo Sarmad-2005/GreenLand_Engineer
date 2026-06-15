@@ -49,7 +49,7 @@ export function Hero() {
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: d(0.3) }}
-          className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-deep/70"
+          className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-gold [text-shadow:0_1px_8px_rgba(20,37,31,0.5)]"
         >
           <span className="inline-block size-1.5 animate-pulse rounded-full bg-leaf" />
           Agricultural Machinery Manufacturing

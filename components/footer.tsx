@@ -69,7 +69,7 @@ const socials = socialLinks.map((s) => ({
 
 export function Footer() {
   return (
-    <footer className="border-t border-border bg-background text-deep">
+    <footer className="border-t border-deep bg-deep text-background">
       <div className="mx-auto max-w-7xl px-5 py-8 md:px-8 md:py-10">
 
         {/* Top: logo + subscribe + blurb (full width on mobile, left column on desktop) */}
@@ -97,17 +97,17 @@ export function Footer() {
                 type="email"
                 required
                 placeholder="you@farm.com"
-                className="min-w-0 flex-1 rounded-full border border-border bg-card px-4 py-2 text-sm text-deep placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-leaf"
+                className="min-w-0 flex-1 rounded-full border border-background/25 bg-card px-4 py-2 text-sm text-deep placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-gold"
               />
               <button
                 type="submit"
-                className="shrink-0 rounded-full bg-deep px-4 py-2 font-mono text-sm font-medium text-background transition-transform hover:scale-105"
+                className="shrink-0 rounded-full bg-gold px-4 py-2 font-mono text-sm font-medium text-deep transition-transform hover:scale-105"
               >
                 Subscribe
               </button>
             </form>
 
-            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+            <p className="mt-4 text-sm leading-relaxed text-background/70">
               {company.blurb}
             </p>
           </div>
@@ -116,7 +116,7 @@ export function Footer() {
           <div className="hidden md:flex md:gap-16">
             {/* Contact */}
             <div>
-              <h3 className="font-mono text-[11px] font-medium uppercase tracking-widest text-deep">
+              <h3 className="font-mono text-[11px] font-medium uppercase tracking-widest text-background">
                 Contact
               </h3>
               <ul className="mt-4 space-y-2.5">
@@ -125,9 +125,9 @@ export function Footer() {
                     <a
                       href={href}
                       {...(external ? { target: '_blank', rel: 'noreferrer' } : {})}
-                      className="group flex items-start gap-2.5 text-sm text-muted-foreground transition-colors hover:text-deep"
+                      className="group flex items-start gap-2.5 text-sm text-background/70 transition-colors hover:text-background"
                     >
-                      <Icon className="mt-0.5 size-4 shrink-0 text-leaf" />
+                      <Icon className="mt-0.5 size-4 shrink-0 text-gold" />
                       <span>{label}</span>
                     </a>
                   </li>
@@ -137,7 +137,7 @@ export function Footer() {
 
             {/* Quick Links */}
             <div>
-              <h3 className="font-mono text-[11px] font-medium uppercase tracking-widest text-deep">
+              <h3 className="font-mono text-[11px] font-medium uppercase tracking-widest text-background">
                 Quick Links
               </h3>
               <ul className="mt-4 space-y-2">
@@ -145,7 +145,7 @@ export function Footer() {
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="text-sm leading-snug text-muted-foreground transition-colors hover:text-deep"
+                      className="text-sm leading-snug text-background/70 transition-colors hover:text-background"
                     >
                       {link.label}
                     </Link>
@@ -160,7 +160,7 @@ export function Footer() {
         <div className="mt-6 flex flex-col gap-6 md:hidden">
           {/* Contact */}
           <div>
-            <h3 className="font-mono text-[11px] font-medium uppercase tracking-widest text-deep">
+            <h3 className="font-mono text-[11px] font-medium uppercase tracking-widest text-background">
               Contact
             </h3>
             <ul className="mt-3 space-y-2.5">
@@ -169,9 +169,9 @@ export function Footer() {
                   <a
                     href={href}
                     {...(external ? { target: '_blank', rel: 'noreferrer' } : {})}
-                    className="group flex items-start gap-2 text-sm text-muted-foreground transition-colors hover:text-deep"
+                    className="group flex items-start gap-2 text-sm text-background/70 transition-colors hover:text-background"
                   >
-                    <Icon className="mt-0.5 size-4 shrink-0 text-leaf" />
+                    <Icon className="mt-0.5 size-4 shrink-0 text-gold" />
                     <span className="break-words">{label}</span>
                   </a>
                 </li>
@@ -181,7 +181,7 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-mono text-[11px] font-medium uppercase tracking-widest text-deep">
+            <h3 className="font-mono text-[11px] font-medium uppercase tracking-widest text-background">
               Quick Links
             </h3>
             <ul className="mt-3 grid grid-cols-2 gap-x-6 gap-y-2">
@@ -189,7 +189,7 @@ export function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-sm leading-snug text-muted-foreground transition-colors hover:text-deep"
+                    className="text-sm leading-snug text-background/70 transition-colors hover:text-background"
                   >
                     {link.label}
                   </Link>
@@ -200,8 +200,8 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-8 flex flex-col-reverse gap-4 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-mono text-xs text-muted-foreground">
+        <div className="mt-8 flex flex-col-reverse gap-4 border-t border-background/15 pt-5 sm:flex-row sm:items-center sm:justify-between">
+          <p className="font-mono text-xs text-background/60">
             © {new Date().getFullYear()} Green Land Engineers. All rights reserved.
           </p>
           <div className="flex gap-2">
@@ -212,7 +212,7 @@ export function Footer() {
                 aria-label={label}
                 target="_blank"
                 rel="noreferrer"
-                className="flex size-8 items-center justify-center rounded-full border border-border text-deep transition-colors hover:bg-deep hover:text-background"
+                className="flex size-8 items-center justify-center rounded-full border border-background/25 text-background transition-colors hover:bg-gold hover:text-deep"
               >
                 <Icon className="size-4" />
               </a>

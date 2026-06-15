@@ -63,7 +63,7 @@
   --deep: #226b3a;
   --leaf: #38a05c;
   --soil: #6b4226;
-  --gold: #d9a640;
+  --gold: #f1df1d;
   --sage: #dce8dc;
 
   --background: #f7f4ec;
@@ -78,14 +78,14 @@
   --secondary-foreground: #226b3a;
   --muted: #e9e4d6;
   --muted-foreground: #5b6157;
-  --accent: #d9a640;
+  --accent: #f1df1d;
   --accent-foreground: #20251f;
   --destructive: oklch(0.577 0.245 27.325);
   --border: #d8d2c2;
   --input: #d8d2c2;
   --ring: #38a05c;
   --chart-1: #38a05c;
-  --chart-2: #d9a640;
+  --chart-2: #f1df1d;
   --chart-3: #6b4226;
   --chart-4: #226b3a;
   --chart-5: #9bb38e;
@@ -113,7 +113,7 @@
   --secondary-foreground: #f7f4ec;
   --muted: #28332a;
   --muted-foreground: #a9b3a5;
-  --accent: #d9a640;
+  --accent: #f1df1d;
   --accent-foreground: #20251f;
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 12%);

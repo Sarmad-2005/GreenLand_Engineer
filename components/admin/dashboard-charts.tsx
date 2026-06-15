@@ -15,7 +15,7 @@ import {
 } from 'recharts'
 import type { DashboardData } from '@/lib/analytics'
 
-const PIE_COLORS = ['#226b3a', '#38a05c', '#d9a640', '#6b4226', '#9bb38e', '#dce8dc', '#20251f']
+const PIE_COLORS = ['#226b3a', '#38a05c', '#f1df1d', '#6b4226', '#9bb38e', '#dce8dc', '#20251f']
 
 export function ContentTrendChart({ data }: { data: DashboardData['monthly'] }) {
   return (
@@ -40,7 +40,7 @@ export function ContentTrendChart({ data }: { data: DashboardData['monthly'] }) 
             />
             <Legend wrapperStyle={{ fontSize: 12 }} />
             <Bar dataKey="products" fill="#38a05c" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="blogs" fill="#d9a640" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="blogs" fill="#f1df1d" radius={[4, 4, 0, 0]} />
             <Bar dataKey="news" fill="#6b4226" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
