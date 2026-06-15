@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Phone, Mail, MapPin } from 'lucide-react'
 import { contactInfo, socialLinks } from '@/lib/site-data'
+import { apiErrorMessage } from '@/lib/form-error'
 import {
   Facebook,
   Instagram,
@@ -85,7 +86,7 @@ function NewsletterForm() {
       })
       if (!res.ok) {
         const body = await res.json().catch(() => null)
-        throw new Error(body?.error || 'Could not subscribe. Please try again.')
+        throw new Error(apiErrorMessage(body, 'Could not subscribe. Please try again.'))
       }
       setStatus('success')
       setEmail('')

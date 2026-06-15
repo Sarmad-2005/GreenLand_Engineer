@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { categories } from '@/lib/site-data'
+import { apiErrorMessage } from '@/lib/form-error'
 
 function FloatingField({
   label,
@@ -57,7 +58,7 @@ export function ContactForm() {
       })
       if (!res.ok) {
         const body = await res.json().catch(() => null)
-        throw new Error(body?.error || 'Something went wrong. Please try again.')
+        throw new Error(apiErrorMessage(body))
       }
       setSent(true)
     } catch (err) {

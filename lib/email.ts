@@ -28,6 +28,11 @@ function getTransporter(): Transporter | null {
     transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: { user: GMAIL_USER, pass: GMAIL_APP_PASSWORD },
+      // Fail fast instead of hanging the HTTP response if SMTP is slow/blocked
+      // (e.g. wrong app password, or egress throttled on serverless).
+      connectionTimeout: 8000,
+      greetingTimeout: 7000,
+      socketTimeout: 9000,
     })
   }
   return transporter
@@ -52,13 +57,13 @@ export async function sendMail({ to, subject, html, replyTo }: SendArgs): Promis
     return false
   }
   try {
-    await tx.sendMail({
-      from: `"${FROM_NAME}" <${GMAIL_USER}>`,
-      to,
-      subject,
-      html,
-      replyTo,
-    })
+    // Hard cap the send so a misconfigured/blocked SMTP can never hang the request.
+    await Promise.race([
+      tx.sendMail({ from: `"${FROM_NAME}" <${GMAIL_USER}>`, to, subject, html, replyTo }),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('email send timed out')), 9000),
+      ),
+    ])
     return true
   } catch (err) {
     console.error('[email] send failed:', err)
