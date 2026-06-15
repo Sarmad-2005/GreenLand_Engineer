@@ -3,9 +3,10 @@
 import Image from 'next/image'
 import { motion, useReducedMotion } from 'framer-motion'
 
-// Positions + motion for up to 4 floating product images, clustered on the
-// right. Each drifts on its own duration/offset so the group moves like it's
-// suspended in fluid rather than bobbing in sync.
+// Positions + motion for up to 4 floating product images spread across the
+// whole hero (left, center, right) as a background layer. Each drifts on its
+// own duration/offset so the group moves like it's suspended in fluid rather
+// than bobbing in sync.
 type Slot = {
   pos: React.CSSProperties
   size: string // square width via clamp() so it scales with the viewport
@@ -16,37 +17,41 @@ type Slot = {
 }
 
 const SLOTS: Slot[] = [
+  // large — right
   {
-    pos: { right: '7%', top: '18%' },
-    size: 'clamp(120px, 25vw, 215px)',
+    pos: { right: '2%', top: '12%' },
+    size: 'clamp(165px, 30vw, 360px)',
     z: 40,
     opacity: 1,
     delay: 0,
-    float: { y: [-16, 16], x: [-5, 5], rotate: [-3, 3], duration: 6 },
+    float: { y: [-16, 16], x: [-4, 4], rotate: [-3, 3], duration: 6.2 },
   },
+  // large — left
   {
-    pos: { left: '1%', top: '8%' },
-    size: 'clamp(78px, 15vw, 140px)',
-    z: 30,
-    opacity: 0.96,
+    pos: { left: '2%', top: '15%' },
+    size: 'clamp(140px, 26vw, 300px)',
+    z: 35,
+    opacity: 0.95,
     delay: 0.5,
-    float: { y: [13, -13], rotate: [3, -3], duration: 7.4 },
+    float: { y: [14, -14], rotate: [3, -3], duration: 7.4 },
   },
+  // center — high
   {
-    pos: { left: '13%', bottom: '9%' },
-    size: 'clamp(82px, 16vw, 150px)',
+    pos: { left: '37%', top: '5%' },
+    size: 'clamp(120px, 22vw, 250px)',
     z: 30,
-    opacity: 0.96,
+    opacity: 0.9,
     delay: 0.9,
-    float: { y: [14, -14], x: [6, -6], rotate: [-2, 2], duration: 8.2 },
+    float: { y: [12, -12], x: [6, -6], rotate: [-2, 2], duration: 8.2 },
   },
+  // center — low
   {
-    pos: { right: '2%', bottom: '17%' },
-    size: 'clamp(62px, 12vw, 110px)',
-    z: 20,
+    pos: { left: '47%', bottom: '6%' },
+    size: 'clamp(130px, 23vw, 265px)',
+    z: 30,
     opacity: 0.92,
     delay: 0.3,
-    float: { y: [-11, 11], rotate: [2, -2], duration: 6.6 },
+    float: { y: [-13, 13], rotate: [2, -2], duration: 6.8 },
   },
 ]
 
@@ -61,10 +66,11 @@ export function ParallaxBanner({
   const imgs = (images.length ? images : ['/placeholder.svg']).slice(0, SLOTS.length)
 
   return (
-    <div className="relative h-[44vh] min-h-72 w-full overflow-hidden bg-background md:h-[56vh]">
-      {/* Floating product cluster — right side. z-0 keeps the whole group below
-          the title's stacking layer so the heading stays readable on top. */}
-      <div className="pointer-events-none absolute inset-y-0 right-0 z-0 w-[64%] sm:w-[60%] md:w-[56%]">
+    <div className="relative h-[46vh] min-h-80 w-full overflow-hidden bg-background md:h-[58vh]">
+      {/* Floating product images spread across the full hero. z-0 keeps the
+          whole group below the title's stacking layer so it reads as a
+          background while the heading stays on top. */}
+      <div className="pointer-events-none absolute inset-0 z-0">
         {imgs.map((src, i) => {
           const slot = SLOTS[i]
           return (
@@ -89,17 +95,24 @@ export function ParallaxBanner({
                         delay: slot.delay,
                       }
                 }
-                className="relative h-full w-full drop-shadow-[0_22px_38px_rgba(31,58,46,0.20)]"
+                className="relative h-full w-full drop-shadow-[0_24px_42px_rgba(31,58,46,0.20)]"
               >
-                <Image src={src || '/placeholder.svg'} alt="" fill sizes="240px" className="object-contain" />
+                <Image src={src || '/placeholder.svg'} alt="" fill sizes="360px" className="object-contain" />
               </motion.div>
             </motion.div>
           )
         })}
       </div>
 
-      {/* Left-to-right fade so the title is always readable over the cluster */}
-      <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-background via-background/80 to-transparent" />
+      {/* Bottom-left scrim: a soft cream wash only behind the title so it stays
+          readable, fading out across the rest so the images show through. */}
+      <div
+        className="pointer-events-none absolute inset-0 z-[1]"
+        style={{
+          background:
+            'linear-gradient(to top right, var(--background) 0%, rgba(247,244,236,0.6) 20%, transparent 48%)',
+        }}
+      />
 
       {/* Subtle dot pattern */}
       <div
