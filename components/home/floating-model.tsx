@@ -8,6 +8,7 @@ import * as THREE from 'three'
 
 const MODEL_URL = '/base_basic_shaded.glb'
 const TARGET_HEIGHT = 1.5 // world-units tall once normalized (smaller background prop)
+const MAX_WIDTH_FRAC = 0.6 // most of the viewport width the tractor may span (shrinks it on narrow screens)
 const ZIGZAG_CYCLES = 3 // how many left-right weaves across the full scroll
 const BASE_YAW = -0.6 // pleasant 3/4 rest view of the tractor
 const Y_TOP = 1.6 // world-units: rest position at scroll start (upper, full body in view)
@@ -28,7 +29,7 @@ function Rig({ progress, reduce }: { progress: MotionValue<number>; reduce: bool
   const invalidate = useThree((s) => s.invalidate)
 
   // Clone + normalize: recenter and scale the model to a consistent height.
-  const { object, scale } = useMemo(() => {
+  const { object, baseScale, baseWidth } = useMemo(() => {
     const obj = scene.clone(true)
     const box = new THREE.Box3().setFromObject(obj)
     const s = new THREE.Vector3()
@@ -36,8 +37,17 @@ function Rig({ progress, reduce }: { progress: MotionValue<number>; reduce: bool
     box.getSize(s)
     box.getCenter(c)
     obj.position.set(-c.x, -c.y, -c.z)
-    return { object: obj, scale: TARGET_HEIGHT / s.y }
+    const bScale = TARGET_HEIGHT / s.y
+    // max(x, z) so the width cap still holds when the user spins the long axis toward the camera
+    return { object: obj, baseScale: bScale, baseWidth: Math.max(s.x, s.z) * bScale }
   }, [scene])
+
+  // Shrink the model on narrow screens so it never spans more than MAX_WIDTH_FRAC of the
+  // viewport. Clamped to 1× so wide/desktop screens render at the natural size, unchanged.
+  const fitScale = useMemo(
+    () => Math.min(1, (MAX_WIDTH_FRAC * viewport.width) / baseWidth),
+    [viewport.width, baseWidth],
+  )
 
   // Scroll-driven target, the user-applied drag offset, and the smoothed actual
   // position (frame-damped toward target+offset so motion always reads as fluid).
@@ -159,7 +169,7 @@ function Rig({ progress, reduce }: { progress: MotionValue<number>; reduce: bool
     <group ref={outer}>
       {/* spinRef is rotated by the canvas drag handler above for the 360° view;
           kept outside <Float> so the idle hover and the user's spin compose. */}
-      <group ref={spinRef} rotation={[0, BASE_YAW, 0]} scale={scale}>
+      <group ref={spinRef} rotation={[0, BASE_YAW, 0]} scale={baseScale * fitScale}>
         <Float
           enabled={!reduce}
           speed={reduce ? 0 : 2}
