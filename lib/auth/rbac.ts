@@ -7,6 +7,7 @@ export type Permission =
   | 'products:manage'
   | 'testimonials:manage'
   | 'messages:manage'
+  | 'suppliers:manage'
   | 'analytics:view'
   | 'users:manage'
 
@@ -18,6 +19,7 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'products:manage',
     'testimonials:manage',
     'messages:manage',
+    'suppliers:manage',
     'analytics:view',
     'users:manage',
   ],
@@ -28,6 +30,7 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'products:manage',
     'testimonials:manage',
     'messages:manage',
+    'suppliers:manage',
     'analytics:view',
   ],
   // Editor: create/edit content only (news + blogs), no settings/users
@@ -53,6 +56,8 @@ export const ROUTE_PERMISSIONS: { prefix: string; permission: Permission }[] = [
   { prefix: '/admin/testimonials', permission: 'testimonials:manage' },
   { prefix: '/admin/messages', permission: 'messages:manage' },
   { prefix: '/api/admin/messages', permission: 'messages:manage' },
+  { prefix: '/admin/suppliers', permission: 'suppliers:manage' },
+  { prefix: '/api/admin/suppliers', permission: 'suppliers:manage' },
 ]
 
 export function requiredPermissionForPath(pathname: string): Permission | null {

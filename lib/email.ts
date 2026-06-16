@@ -133,6 +133,55 @@ export function contactEmailHtml(d: ContactEmailData): string {
   `)
 }
 
+export interface SupplierEmailData {
+  companyName: string
+  contactName: string
+  email: string
+  phone: string
+  whatsapp?: string | null
+  country?: string | null
+  city?: string | null
+  website?: string | null
+  productTypes?: string | null
+  message?: string | null
+  documentCount: number
+}
+
+export function supplierEmailHtml(d: SupplierEmailData): string {
+  const row = (label: string, value?: string | null) =>
+    value
+      ? `<tr>
+          <td style="padding:6px 12px 6px 0;color:${MUTED};font-size:13px;white-space:nowrap;vertical-align:top">${label}</td>
+          <td style="padding:6px 0;font-size:14px;color:${INK}">${escapeHtml(value)}</td>
+        </tr>`
+      : ''
+  const location = [d.city, d.country].filter(Boolean).join(', ')
+  return shell(`
+    <h2 style="margin:0 0 4px;font-size:18px;color:${DEEP}">New supplier application</h2>
+    <p style="margin:0 0 16px;color:${MUTED};font-size:13px">Submitted via the “Become a Supplier” form.</p>
+    <table style="width:100%;border-collapse:collapse">
+      ${row('Company', d.companyName)}
+      ${row('Contact', d.contactName)}
+      ${row('Email', d.email)}
+      ${row('Phone', d.phone)}
+      ${row('WhatsApp', d.whatsapp)}
+      ${row('Location', location)}
+      ${row('Website', d.website)}
+      ${row('Supplies', d.productTypes)}
+      ${row('Documents', `${d.documentCount} attached`)}
+    </table>
+    ${
+      d.message
+        ? `<div style="margin:16px 0 0;padding:14px 16px;background:#f7f4ec;border-radius:10px;border:1px solid #e7e2d4">
+            <div style="color:${MUTED};font-size:12px;margin-bottom:6px">Message</div>
+            <div style="font-size:14px;line-height:1.55;white-space:pre-wrap">${escapeHtml(d.message)}</div>
+          </div>`
+        : ''
+    }
+    <p style="margin:18px 0 0;color:${MUTED};font-size:12px">Review the application and attached documents in the admin dashboard.</p>
+  `)
+}
+
 function button(href: string, label: string): string {
   return `<a href="${href}" style="display:inline-block;background:${GOLD};color:${DEEP};font-weight:600;text-decoration:none;padding:12px 22px;border-radius:999px;font-size:14px">${label}</a>`
 }

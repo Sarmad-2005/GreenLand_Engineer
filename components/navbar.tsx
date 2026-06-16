@@ -66,6 +66,12 @@ export function Navbar() {
             </Link>
           ))}
           <Link
+            href="/become-supplier"
+            className="font-mono text-sm tracking-wide transition-opacity hover:opacity-70"
+          >
+            Become a Supplier
+          </Link>
+          <Link
             href="/login"
             className="font-mono text-sm tracking-wide transition-opacity hover:opacity-70"
           >
@@ -109,6 +115,13 @@ export function Navbar() {
                   {link.label}
                 </Link>
               ))}
+              <Link
+                href="/become-supplier"
+                onClick={() => setOpen(false)}
+                className="rounded-lg px-3 py-3 font-mono text-sm hover:bg-leaf/30"
+              >
+                Become a Supplier
+              </Link>
               <Link
                 href="/login"
                 onClick={() => setOpen(false)}
