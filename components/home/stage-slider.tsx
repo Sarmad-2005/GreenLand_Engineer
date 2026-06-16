@@ -8,6 +8,8 @@ import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Reveal } from '@/components/reveal'
 
 const EASE = [0.22, 1, 0.36, 1] as const
+// How far (px) a horizontal swipe must travel to flip to the next/prev slide.
+const SWIPE_THRESHOLD = 60
 
 type StageSliderProps<T> = {
   items: T[]
@@ -97,8 +99,10 @@ export function StageSlider<T>({
           transition={{ duration: 0.7, ease: EASE }}
           className="relative mt-12"
         >
-          {/* One item floats here at a time; min-h keeps the frame steady between slides */}
-          <div className="relative min-h-[560px] sm:min-h-[420px] md:min-h-[360px]">
+          {/* One item floats here at a time; min-h keeps the frame steady between slides.
+              Swipe horizontally (touch) or drag to change slides; touch-action pan-y
+              keeps vertical page scrolling working. */}
+          <div className="relative min-h-[560px] touch-pan-y sm:min-h-[420px] md:min-h-[360px]">
             <AnimatePresence mode="wait" custom={direction}>
               <motion.div
                 key={getKey(items[index])}
@@ -107,6 +111,15 @@ export function StageSlider<T>({
                 initial="enter"
                 animate="center"
                 exit="exit"
+                drag={count > 1 ? 'x' : false}
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.18}
+                onDragEnd={(_e, info) => {
+                  const swipe = info.offset.x
+                  if (swipe < -SWIPE_THRESHOLD || info.velocity.x < -500) paginate(1)
+                  else if (swipe > SWIPE_THRESHOLD || info.velocity.x > 500) paginate(-1)
+                }}
+                className={count > 1 ? 'cursor-grab touch-pan-y select-none active:cursor-grabbing' : ''}
               >
                 {renderSlide(items[index], index)}
               </motion.div>
