@@ -6,7 +6,7 @@ import { useGLTF, Float } from '@react-three/drei'
 import type { MotionValue } from 'framer-motion'
 import * as THREE from 'three'
 
-const MODEL_URL = '/base_basic_shaded.glb'
+const MODEL_URL = '/superseedmodel.glb'
 const TARGET_HEIGHT = 1.5 // world-units tall once normalized (smaller background prop)
 const MAX_WIDTH_FRAC = 0.6 // most of the viewport width the tractor may span (shrinks it on narrow screens)
 const ZIGZAG_CYCLES = 3 // how many left-right weaves across the full scroll

@@ -23,12 +23,12 @@ const TRACTOR_Z = 0.4
 const TARGET_HEIGHT = 2.6
 const FLOAT_H = 0.5 // how high the tractor lifts once it parks
 
-// The model's length runs along its local Z axis. Rotate it so the long
-// axis points along +X (its direction of travel). Flip the sign if the
-// tractor ends up facing away from its movement.
-const MODEL_YAW = Math.PI / 2
+// The super-seeder's length already runs along its local X axis, which is its
+// direction of travel (+X) — so it drives across broadside with no extra turn.
+// (The previous tractor model's length ran along Z and needed a PI/2 yaw here.)
+const MODEL_YAW = 0
 
-const MODEL_URL = '/base_basic_shaded.glb'
+const MODEL_URL = '/superseedmodel.glb'
 
 const easeInOut = (t: number) =>
   t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2
@@ -254,11 +254,14 @@ function Tractor({ animate }: { animate: boolean }) {
     const s = TARGET_HEIGHT / size.y
     // recenter on x/z, keep base on the ground
     obj.position.set(-center.x, -box.min.y, -center.z)
+    // footLength is the extent along the travel axis (world X), footWidth the
+    // depth toward the camera (world Z). With MODEL_YAW = 0 the model's local X
+    // is the travel axis and local Z is the depth.
     return {
       object: obj,
       scale: s,
-      footWidth: size.x * s,
-      footLength: size.z * s,
+      footWidth: size.z * s,
+      footLength: size.x * s,
     }
   }, [scene])
 

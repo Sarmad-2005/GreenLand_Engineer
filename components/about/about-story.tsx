@@ -1,10 +1,16 @@
 'use client'
 
+import dynamic from 'next/dynamic'
+import { useReducedMotion } from 'framer-motion'
 import { Reveal } from '@/components/reveal'
 import { FloatingImage } from '@/components/floating-image'
 import { historyParagraphs, ourTeam } from '@/lib/about-data'
 
+// Heavy R3F canvas — load on the client only, like the hero scene.
+const AboutModel = dynamic(() => import('./about-model'), { ssr: false })
+
 export function AboutStory() {
+  const reduce = useReducedMotion()
   return (
     <section className="relative">
       <div className="mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-24">
@@ -32,13 +38,11 @@ export function AboutStory() {
           <Reveal>
             <div className="relative mx-auto h-[22rem] w-full max-w-md sm:h-[26rem]">
               <div className="blob-1 absolute inset-6 bg-sage" />
-              <FloatingImage
-                src="/products/tractor.png"
-                alt="Green Land agricultural machinery"
-                size={260}
-                className="absolute left-1/2 top-4 -translate-x-1/2"
-                duration={7}
-              />
+              {/* Interactive 3D super-seeder in place of the old static tractor
+                  image — turns on its own and can be dragged to view in 3D. */}
+              <div className="absolute inset-0">
+                <AboutModel reduce={!!reduce} />
+              </div>
               <FloatingImage
                 src="/products/seeds-bag.png"
                 alt=""
