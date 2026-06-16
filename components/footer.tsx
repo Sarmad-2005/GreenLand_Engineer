@@ -21,7 +21,7 @@ const company = {
 }
 
 const quickLinks = [
-  { label: 'About Us', href: '/' },
+  { label: 'About Us', href: '/about' },
   { label: 'Products', href: '/products' },
   { label: 'News', href: '/news' },
   { label: 'Blog', href: '/blog' },

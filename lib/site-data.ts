@@ -95,6 +95,7 @@ export const categories = [
 export type Category = (typeof categories)[number]
 
 export const navLinks = [
+  { href: '/about', label: 'About' },
   { href: '/products', label: 'Products' },
   { href: '/blog', label: 'Blog' },
   { href: '/news', label: 'News' },
