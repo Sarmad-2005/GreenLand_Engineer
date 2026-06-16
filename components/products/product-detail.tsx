@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, Droplets, Ruler, ShieldCheck, Gauge, Wrench, Leaf } from 'lucide-react'
+import { youtubeEmbedUrl } from '@/lib/youtube'
 
 const features = [
   { icon: ShieldCheck, title: 'Heavy-Duty Build', text: 'Heat-treated steel for long-life performance.' },
@@ -17,6 +18,7 @@ const features = [
 
 type Related = { slug: string; name: string; image: string }
 type Spec = { label: string; value: string }
+type Video = { title: string; url: string }
 
 export function ProductDetail({
   name,
@@ -24,6 +26,7 @@ export function ProductDetail({
   categoryName,
   images,
   specifications = [],
+  videos = [],
   related,
 }: {
   name: string
@@ -31,11 +34,18 @@ export function ProductDetail({
   categoryName: string
   images: string[]
   specifications?: Spec[]
+  videos?: Video[]
   related: Related[]
 }) {
   const flatImages = images?.length ? images : ['/placeholder.svg']
   const [active, setActive] = useState(0)
   const [openSpecs, setOpenSpecs] = useState(true)
+
+  // Drop any link we can't turn into a YouTube embed so the section only shows
+  // players that will actually load.
+  const playableVideos = videos
+    .map((v) => ({ ...v, embed: youtubeEmbedUrl(v.url) }))
+    .filter((v): v is Video & { embed: string } => Boolean(v.embed))
 
   return (
     <div className="mx-auto max-w-7xl px-5 py-10 md:px-8 md:py-14">
@@ -152,6 +162,46 @@ export function ProductDetail({
           )}
         </div>
       </div>
+
+      {/* Videos — embedded YouTube players, only when the product has links */}
+      {playableVideos.length > 0 && (
+        <section className="mt-20">
+          <h2 className="font-serif text-2xl font-semibold text-deep md:text-3xl">Videos</h2>
+          <p className="mt-1 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+            See the {name} in action
+          </p>
+          <div
+            className={`mt-8 grid gap-6 ${playableVideos.length > 1 ? 'md:grid-cols-2' : 'max-w-3xl'}`}
+          >
+            {playableVideos.map((v, i) => (
+              <motion.figure
+                key={`${v.url}-${i}`}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: 0.5 }}
+                className="overflow-hidden rounded-3xl border border-border bg-card"
+              >
+                <div className="relative aspect-video w-full bg-black">
+                  <iframe
+                    src={v.embed}
+                    title={v.title || `${name} video ${i + 1}`}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    loading="lazy"
+                    className="absolute inset-0 h-full w-full"
+                  />
+                </div>
+                {v.title && (
+                  <figcaption className="px-5 py-3.5 font-serif text-sm font-semibold text-deep">
+                    {v.title}
+                  </figcaption>
+                )}
+              </motion.figure>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Features */}
       <section className="mt-20">

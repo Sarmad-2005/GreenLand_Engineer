@@ -151,6 +151,7 @@ export async function getProductBySlug(categorySlug: string, productSlug: string
     categorySlug: product.category.slug,
     categoryName: product.category.name,
     specifications: (product.specifications as { label: string; value: string }[] | null) ?? [],
+    videos: (product.videos as { title: string; url: string }[] | null) ?? [],
     images: productImagePaths(product.images, product.category.image),
     related: related.map((r) => ({
       slug: r.slug,

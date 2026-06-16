@@ -50,6 +50,9 @@ export const PATCH = handler(async (req: NextRequest, { params }: Ctx) => {
       ...(input.specifications !== undefined
         ? { specifications: input.specifications as Prisma.InputJsonValue }
         : {}),
+      ...(input.videos !== undefined
+        ? { videos: input.videos as Prisma.InputJsonValue }
+        : {}),
       ...(input.images !== undefined
         ? { images: { deleteMany: {}, create: input.images.map((path, position) => ({ path, position })) } }
         : {}),

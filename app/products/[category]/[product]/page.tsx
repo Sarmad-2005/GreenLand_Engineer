@@ -50,6 +50,7 @@ export default async function ProductPage({
           categoryName={item.categoryName}
           images={item.images}
           specifications={item.specifications}
+          videos={item.videos}
           related={item.related}
         />
       </main>

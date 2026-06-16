@@ -33,6 +33,12 @@ const EXAMPLE_SPECS: Prisma.InputJsonValue = [
   { label: 'Overall Height (mm)', value: '1530' },
 ]
 
+// Sample YouTube link attached to the same demo product so the public page shows
+// an embedded player out of the box. Replace with a real product video in admin.
+const EXAMPLE_VIDEOS: Prisma.InputJsonValue = [
+  { title: 'Super Seeder — field demo', url: 'https://www.youtube.com/watch?v=ZbZSe6N_BXs' },
+]
+
 const NEWS_TYPE_MAP: Record<string, NewsType> = {
   'Meeting Notes': 'MEETING_NOTES',
   Announcements: 'ANNOUNCEMENTS',
@@ -114,9 +120,10 @@ async function main() {
       while (usedSlugs.has(slug)) slug = `${slugify(p.name)}-${cat.slug}`
       usedSlugs.add(slug)
 
-      // Attach the example spec sheet to the very first product as a demo.
+      // Attach the example spec sheet + video to the very first product as a demo.
       const isDemoSpecProduct = cat.slug === categories[0].slug && i === 0
       const specifications = isDemoSpecProduct ? EXAMPLE_SPECS : undefined
+      const videos = isDemoSpecProduct ? EXAMPLE_VIDEOS : undefined
 
       const product = await prisma.product.upsert({
         where: { slug },
@@ -127,6 +134,7 @@ async function main() {
           featured: i === 0,
           status: 'ACTIVE',
           ...(specifications !== undefined ? { specifications } : {}),
+          ...(videos !== undefined ? { videos } : {}),
         },
         create: {
           slug,
@@ -138,6 +146,7 @@ async function main() {
           featured: i === 0,
           status: 'ACTIVE',
           ...(specifications !== undefined ? { specifications } : {}),
+          ...(videos !== undefined ? { videos } : {}),
         },
       })
       sku++

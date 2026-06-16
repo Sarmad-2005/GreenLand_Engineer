@@ -94,6 +94,8 @@ model Product {
   images      ProductImage[]
   // Ordered list of { label, value } spec rows shown on the public product page.
   specifications Json?
+  // Ordered list of { title, url } YouTube links embedded on the product page.
+  videos      Json?
   deletedAt   DateTime?
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt

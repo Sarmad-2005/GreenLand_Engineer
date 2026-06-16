@@ -68,6 +68,7 @@ export const POST = handler(async (req: NextRequest) => {
       featured: input.featured,
       status: input.status,
       specifications: (input.specifications ?? []) as Prisma.InputJsonValue,
+      videos: (input.videos ?? []) as Prisma.InputJsonValue,
       images: {
         create: (input.images ?? []).map((path, position) => ({ path, position })),
       },

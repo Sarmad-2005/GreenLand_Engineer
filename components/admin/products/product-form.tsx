@@ -9,6 +9,7 @@ import { inputCls, primaryBtn, ghostBtn } from '@/components/admin/ui/bits'
 import { api, ApiError, describeError } from '@/lib/client-api'
 
 type SpecRow = { label: string; value: string }
+type VideoRow = { title: string; url: string }
 
 export interface ProductRow {
   id: string
@@ -24,6 +25,7 @@ export interface ProductRow {
   category?: { name: string; slug: string }
   images?: { path: string }[]
   specifications?: SpecRow[]
+  videos?: VideoRow[]
   createdAt: string
 }
 
@@ -52,6 +54,9 @@ export function ProductForm({
   const [specs, setSpecs] = useState<SpecRow[]>(
     initial?.specifications?.length ? initial.specifications : [],
   )
+  const [videos, setVideos] = useState<VideoRow[]>(
+    initial?.videos?.length ? initial.videos : [],
+  )
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [saving, setSaving] = useState(false)
 
@@ -63,6 +68,16 @@ export function ProductForm({
   }
   function removeSpec(index: number) {
     setSpecs((rows) => rows.filter((_, i) => i !== index))
+  }
+
+  function updateVideo(index: number, field: keyof VideoRow, value: string) {
+    setVideos((rows) => rows.map((r, i) => (i === index ? { ...r, [field]: value } : r)))
+  }
+  function addVideo() {
+    setVideos((rows) => [...rows, { title: '', url: '' }])
+  }
+  function removeVideo(index: number) {
+    setVideos((rows) => rows.filter((_, i) => i !== index))
   }
 
   useEffect(() => {
@@ -92,6 +107,9 @@ export function ProductForm({
       specifications: specs
         .map((s) => ({ label: s.label.trim(), value: s.value.trim() }))
         .filter((s) => s.label && s.value),
+      videos: videos
+        .map((v) => ({ title: v.title.trim(), url: v.url.trim() }))
+        .filter((v) => v.url),
     }
     try {
       if (editing) await api.patch(`/api/products/${initial!.id}`, payload)
@@ -208,6 +226,58 @@ export function ProductForm({
                   type="button"
                   onClick={() => removeSpec(i)}
                   aria-label={`Remove specification ${i + 1}`}
+                  className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-border text-red-600 transition-colors hover:bg-red-50"
+                >
+                  <Trash2 className="size-3.5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Videos — YouTube links embedded on the public product page */}
+      <div className="rounded-2xl border border-dashed border-border p-4">
+        <div className="mb-3 flex items-center justify-between">
+          <p className="font-mono text-[11px] uppercase tracking-wide text-muted-foreground">
+            Videos
+          </p>
+          <button
+            type="button"
+            onClick={addVideo}
+            className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 font-mono text-xs text-deep transition-colors hover:bg-muted"
+          >
+            <Plus className="size-3.5" /> Add video
+          </button>
+        </div>
+
+        {videos.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            No videos yet. Paste a YouTube link (e.g. https://youtu.be/… or a watch URL) to embed it
+            on this product’s page.
+          </p>
+        ) : (
+          <div className="space-y-2">
+            {videos.map((row, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <input
+                  aria-label={`Video ${i + 1} title`}
+                  value={row.title}
+                  onChange={(e) => updateVideo(i, 'title', e.target.value)}
+                  className={inputCls + ' sm:max-w-[35%]'}
+                  placeholder="Title (optional)"
+                />
+                <input
+                  aria-label={`Video ${i + 1} YouTube link`}
+                  value={row.url}
+                  onChange={(e) => updateVideo(i, 'url', e.target.value)}
+                  className={inputCls}
+                  placeholder="YouTube link (e.g. https://youtu.be/abc123)"
+                />
+                <button
+                  type="button"
+                  onClick={() => removeVideo(i)}
+                  aria-label={`Remove video ${i + 1}`}
                   className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-border text-red-600 transition-colors hover:bg-red-50"
                 >
                   <Trash2 className="size-3.5" />
