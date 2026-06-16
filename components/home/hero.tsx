@@ -7,19 +7,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 
 const HeroScene = dynamic(() => import('./hero-scene'), { ssr: false })
 
-const WORDS = [
-  'Growing',
-  'the',
-  'Future',
-  'of',
-  'Agriculture',
-  'with',
-  'Innovative',
-  'Machinery',
-  '—',
-  'Progressive',
-  'Farmers',
-]
+const WORDS = ['Innovative', 'Machinery', '—', 'Progressive', 'Farmers']
 
 const MARQUEE =
   '· Primary Tillage · Secondary Tillage · Seeding & Planting · Harvesting & Cutting · Post-Harvest Processing · Walk-Behind Machinery · Versatile Equipment '
@@ -73,7 +61,7 @@ export function Hero() {
               <React.Fragment key={i}>
                 <span className="inline-block overflow-hidden py-[0.04em]">
                   <motion.span
-                    className={`inline-block${i === 2 ? ' text-leaf' : ''}`}
+                    className={`inline-block${i >= 3 ? ' text-leaf' : ''}`}
                     variants={{
                       hidden: { y: '110%', opacity: 0 },
                       visible: {
