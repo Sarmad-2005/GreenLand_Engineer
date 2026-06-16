@@ -44,7 +44,7 @@ export function Hero() {
       />
 
       {/* Headline + CTAs — single flex column so nothing overlaps on small screens */}
-      <div className="pointer-events-none relative z-10 flex w-full max-w-4xl flex-1 flex-col items-center px-6 pb-16 pt-24 text-center sm:pt-28 md:pt-[9vh]">
+      <div className="pointer-events-none relative z-10 flex w-full max-w-4xl flex-1 flex-col items-center px-6 pb-16 pt-36 text-center sm:pt-40 md:pt-[16vh]">
         <h1
           className="whitespace-nowrap font-serif font-bold tracking-tight text-deep [text-shadow:0_2px_18px_rgba(247,244,236,0.85)]"
           style={{ fontSize: 'clamp(0.8rem, 3.7vw, 2.3rem)', lineHeight: 1.12 }}
