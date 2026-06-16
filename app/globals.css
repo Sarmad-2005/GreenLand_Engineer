@@ -127,12 +127,15 @@
   }
   body {
     @apply bg-background text-foreground;
-    /* Never allow sideways panning — otherwise on mobile any stray overflow
-       shifts the fixed navbar so its menu button sits off the right edge. */
-    overflow-x: hidden;
   }
   html {
     @apply font-sans;
+    /* Never allow sideways panning — otherwise on mobile any stray overflow
+       widens the layout viewport and shifts the fixed navbar so its menu
+       button sits off the right edge. `clip` (not `hidden`) stops the overflow
+       without making <html> a scroll container, so position:fixed still pins
+       to the viewport correctly. */
+    overflow-x: clip;
   }
 }
 

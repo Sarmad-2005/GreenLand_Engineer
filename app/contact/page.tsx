@@ -91,7 +91,7 @@ export default function ContactPage() {
                 ))}
               </ul>
 
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-3">
                 {socials.map((s) => (
                   <a
                     key={s.key}
@@ -99,7 +99,7 @@ export default function ContactPage() {
                     aria-label={s.label}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex h-11 w-11 items-center justify-center rounded-full border border-deep/20 text-deep transition-colors hover:bg-deep hover:text-background"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-deep/20 text-deep transition-colors hover:bg-deep hover:text-background"
                   >
                     <s.icon className="h-5 w-5" />
                   </a>
