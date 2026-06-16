@@ -38,7 +38,7 @@ export function Navbar() {
             width={40}
             height={40}
             priority
-            className={`h-8 w-auto md:h-10 ${
+            className={`h-8 w-auto animate-[spin_5s_linear_infinite] md:h-10 ${
               scrolled ? 'drop-shadow-[0_1px_2px_rgba(247,244,236,0.45)]' : ''
             }`}
           />

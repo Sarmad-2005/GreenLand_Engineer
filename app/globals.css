@@ -157,3 +157,10 @@
     border-radius: 50% 50% 38% 62% / 55% 45% 55% 45%;
   }
 }
+
+/* Continuous 360° rotation for the logo mark */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

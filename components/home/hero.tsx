@@ -52,7 +52,7 @@ export function Hero() {
           className="inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-leaf [text-shadow:0_1px_8px_rgba(247,244,236,0.95)]"
         >
           <span className="inline-block size-1.5 animate-pulse rounded-full bg-leaf" />
-          Agricultural Machinery Manufacturing
+          Innovative Machinery — Progressive Farmer
         </motion.span>
 
         <h1
