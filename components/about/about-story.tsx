@@ -44,7 +44,7 @@ export function AboutStory() {
                 <AboutModel reduce={!!reduce} />
               </div>
               <FloatingImage
-                src="/products/seeds-bag.png"
+                src="/products/harvesting-cutting/3-multi-purpose-reaper-machine.webp"
                 alt=""
                 size={120}
                 className="absolute bottom-4 left-0"
@@ -52,7 +52,7 @@ export function AboutStory() {
                 delay={0.6}
               />
               <FloatingImage
-                src="/products/fertilizer-sack.png"
+                src="/products/secondary-tillage/1-laser-land-leveller-machine.webp"
                 alt=""
                 size={130}
                 className="absolute bottom-0 right-0"

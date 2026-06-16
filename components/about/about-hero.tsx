@@ -11,20 +11,20 @@ export function AboutHero() {
       {/* low-intensity floating motif behind the copy */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-[0.06]">
         <FloatingImage
-          src="/products/tractor.png"
+          src="/products/primary-tillage/1-super-seeder-coulter-disc-type.webp"
           alt=""
           className="absolute left-[3%] top-[24%] w-48"
           duration={7}
         />
         <FloatingImage
-          src="/products/seeds-bag.png"
+          src="/products/harvesting-cutting/3-multi-purpose-reaper-machine.webp"
           alt=""
           className="absolute right-[6%] top-[14%] w-40"
           duration={8}
           delay={1}
         />
         <FloatingImage
-          src="/products/greenhouse.png"
+          src="/products/secondary-tillage/1-laser-land-leveller-machine.webp"
           alt=""
           className="absolute bottom-[8%] left-[18%] w-44"
           duration={6}
