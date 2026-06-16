@@ -2,7 +2,6 @@ import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { Hero } from '@/components/home/hero'
 import { StatsStrip } from '@/components/home/stats-strip'
-import { BelowHeroStage } from '@/components/home/below-hero-stage'
 import { CategoriesPreview } from '@/components/home/categories-preview'
 import { FeaturedProducts } from '@/components/home/featured-products'
 import { OurMission } from '@/components/home/our-mission'
@@ -24,15 +23,13 @@ export default async function HomePage() {
       <Navbar />
       <main>
         <Hero />
-        <BelowHeroStage>
-          <StatsStrip />
-          <CategoriesPreview categories={categories} />
-          <FeaturedProducts products={featuredProducts} />
-          <OurMission />
-          <CtaBanner />
-          <Testimonials testimonials={testimonials} />
-          <Footer />
-        </BelowHeroStage>
+        <StatsStrip />
+        <CategoriesPreview categories={categories} />
+        <FeaturedProducts products={featuredProducts} />
+        <OurMission />
+        <CtaBanner />
+        <Testimonials testimonials={testimonials} />
+        <Footer />
       </main>
     </>
   )

@@ -127,6 +127,9 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Never allow sideways panning — otherwise on mobile any stray overflow
+       shifts the fixed navbar so its menu button sits off the right edge. */
+    overflow-x: hidden;
   }
   html {
     @apply font-sans;

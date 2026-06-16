@@ -29,8 +29,8 @@ export function Navbar() {
           : 'bg-transparent text-deep'
       }`}
     >
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-8">
-        <Link href="/" className="flex items-center gap-2 md:gap-2.5" aria-label="Green Land Engineers — home">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-5 py-4 md:px-8">
+        <Link href="/" className="flex min-w-0 items-center gap-2 md:gap-2.5" aria-label="Green Land Engineers — home">
           {/* Logo mark (favicon) — always visible */}
           <Image
             src="/logo-mark.png"
@@ -38,18 +38,18 @@ export function Navbar() {
             width={40}
             height={40}
             priority
-            className={`h-8 w-auto animate-[spin-y_5s_linear_infinite] [transform-style:preserve-3d] md:h-10 ${
+            className={`h-8 w-auto shrink-0 animate-[spin-y_5s_linear_infinite] [transform-style:preserve-3d] md:h-10 ${
               scrolled ? 'drop-shadow-[0_1px_2px_rgba(247,244,236,0.45)]' : ''
             }`}
           />
-          {/* Wordmark — desktop only */}
+          {/* Wordmark — shown on all screens; shrinks so it never pushes the menu off */}
           <Image
             src="/navbarlogo1.webp"
             alt=""
             width={221}
             height={40}
             priority
-            className={`hidden h-8 w-auto md:block md:h-10 ${
+            className={`h-7 min-w-0 w-auto max-w-full object-contain sm:h-8 md:h-10 ${
               scrolled ? 'drop-shadow-[0_1px_2px_rgba(247,244,236,0.45)]' : ''
             }`}
           />
@@ -88,7 +88,7 @@ export function Navbar() {
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="md:hidden"
+          className="-mr-1 flex size-10 shrink-0 items-center justify-center md:hidden"
           aria-label={open ? 'Close menu' : 'Open menu'}
         >
           {open ? <X className="size-6" /> : <Menu className="size-6" />}
