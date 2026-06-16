@@ -7,7 +7,7 @@ export const aboutHero = {
   tagline: 'A complete range of standard agricultural implements',
   title: 'Cultivating better farming since 1975',
   intro:
-    'Green Land Engineers has a proven & innovative history over more than four decades of recognized working experience in manufacturing agricultural equipment.',
+    'Green Land Engineers has a proven & innovative history over more than five decades of recognized working experience in manufacturing agricultural equipment.',
   whoWeAre:
     "Green Land Engineers is a leading business that effectively and competently makes farm machinery less complicated and convenient for its farmers. It is one of Pakistan's pioneering companies, manufacturing a vast range of high-quality agricultural farm machinery and components that meet the unique requirements of each farmer. Our heavy-duty equipment has been providing the most successful & advanced farming experiences to local and international farmers since 1975 — and we constantly endeavor to stay at the forefront of innovation in the agriculture sector.",
 }

@@ -22,7 +22,7 @@ export function AboutStory() {
                 Our Story
               </span>
               <h2 className="mt-3 font-serif text-3xl font-semibold text-deep sm:text-4xl md:text-5xl">
-                Four decades in the field
+                Five decades in the field
               </h2>
             </Reveal>
             <div className="mt-6 space-y-5">
