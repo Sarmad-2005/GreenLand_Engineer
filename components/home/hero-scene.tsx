@@ -643,13 +643,21 @@ function ResponsiveCamera() {
   const size = useThree((s) => s.size)
   useLayoutEffect(() => {
     const aspect = size.width / Math.max(1, size.height)
-    const mobile = aspect < 0.85
-    // pull back + widen on narrow screens so the whole field + parked tractor fit
-    camera.position.set(0, mobile ? 4.2 : 3.2, mobile ? 17 : 12)
-    camera.fov = mobile ? 56 : 42
+    // Continuous framing instead of a single mobile breakpoint: t ramps 0 → 1 as
+    // the viewport gets taller (aspect 0.85 → 0.5). The taller the screen, the
+    // more we pull back + widen so the field still fits, AND the higher we aim
+    // the look-target so the bare-soil foreground (kept clear in front of the
+    // wheat so the tractor stays visible) drops below the frame — otherwise tall
+    // phones show a big brown gap under the wheat.
+    const t = THREE.MathUtils.clamp((0.85 - aspect) / (0.85 - 0.5), 0, 1)
+    camera.position.set(
+      0,
+      THREE.MathUtils.lerp(3.2, 4.2, t),
+      THREE.MathUtils.lerp(12, 18, t),
+    )
+    camera.fov = THREE.MathUtils.lerp(42, 58, t)
     camera.updateProjectionMatrix()
-    // look a little higher so the horizon sits lower on screen (more sky for the headline)
-    camera.lookAt(0, mobile ? 2.7 : 2.5, -2)
+    camera.lookAt(0, THREE.MathUtils.lerp(2.5, 3.9, t), -2)
   }, [camera, size])
   return null
 }

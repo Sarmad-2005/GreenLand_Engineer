@@ -7,7 +7,19 @@ import { motion, useReducedMotion } from 'framer-motion'
 
 const HeroScene = dynamic(() => import('./hero-scene'), { ssr: false })
 
-const WORDS = ['Growing', 'the', 'Future', 'of', 'Agriculture']
+const WORDS = [
+  'Growing',
+  'the',
+  'Future',
+  'of',
+  'Agriculture',
+  'with',
+  'Innovative',
+  'Machinery',
+  '—',
+  'Progressive',
+  'Farmers',
+]
 
 const MARQUEE =
   '· Primary Tillage · Secondary Tillage · Seeding & Planting · Harvesting & Cutting · Post-Harvest Processing · Walk-Behind Machinery · Versatile Equipment '
@@ -45,18 +57,8 @@ export function Hero() {
 
       {/* Headline + CTAs — single flex column so nothing overlaps on small screens */}
       <div className="pointer-events-none relative z-10 flex w-full max-w-4xl flex-1 flex-col items-center px-6 pb-16 pt-24 text-center sm:pt-28 md:pt-[9vh]">
-        <motion.span
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: d(0.3) }}
-          className="inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-leaf [text-shadow:0_1px_8px_rgba(247,244,236,0.95)]"
-        >
-          <span className="inline-block size-1.5 animate-pulse rounded-full bg-leaf" />
-          Innovative Machinery — Progressive Farmer
-        </motion.span>
-
         <h1
-          className="mt-6 font-serif font-semibold tracking-tight text-deep [text-shadow:0_2px_18px_rgba(247,244,236,0.85)]"
+          className="font-serif font-semibold tracking-tight text-deep [text-shadow:0_2px_18px_rgba(247,244,236,0.85)]"
           style={{ fontSize: 'clamp(2.1rem, 8vw, 6.5rem)', lineHeight: 1.0 }}
         >
           <motion.span
