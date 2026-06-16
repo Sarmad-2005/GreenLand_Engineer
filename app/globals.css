@@ -158,9 +158,13 @@
   }
 }
 
-/* Continuous 360° rotation for the logo mark */
-@keyframes spin {
+/* Continuous left-to-right circular spin for the logo mark — a 3D Y-axis
+   turn (like a rotating coin) rather than a flat in-plane rotation. */
+@keyframes spin-y {
+  from {
+    transform: perspective(600px) rotateY(0deg);
+  }
   to {
-    transform: rotate(360deg);
+    transform: perspective(600px) rotateY(360deg);
   }
 }
