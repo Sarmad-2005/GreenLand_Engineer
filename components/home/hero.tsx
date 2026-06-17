@@ -9,6 +9,14 @@ const HeroScene = dynamic(() => import('./hero-scene'), { ssr: false })
 
 const WORDS = ['Innovative', 'Machinery', '—', 'Progressive', 'Farmers']
 
+// Modern animated gradient "sheen" applied per word — flows green → gold → green.
+// motion-reduce keeps it static for users who prefer reduced motion.
+const SHEEN =
+  'inline-block bg-clip-text text-transparent [-webkit-text-fill-color:transparent] ' +
+  '[background-image:linear-gradient(110deg,#226b3a_0%,#38a05c_22%,#f1df1d_50%,#38a05c_78%,#226b3a_100%)] ' +
+  '[background-size:200%_auto] [background-position:0%_center] ' +
+  'animate-[hero-sheen_6s_linear_infinite] motion-reduce:animate-none'
+
 const MARQUEE =
   '· Primary Tillage · Secondary Tillage · Seeding & Planting · Harvesting & Cutting · Post-Harvest Processing · Walk-Behind Machinery · Versatile Equipment '
 
@@ -47,7 +55,7 @@ export function Hero() {
       <div className="pointer-events-none relative z-10 flex w-full max-w-4xl flex-1 flex-col items-center px-6 pb-16 pt-36 text-center sm:pt-40 md:pt-[16vh]">
         <h1
           className="whitespace-nowrap font-serif font-bold tracking-tight text-deep [text-shadow:0_2px_18px_rgba(247,244,236,0.85)]"
-          style={{ fontSize: 'clamp(0.8rem, 3.7vw, 2.3rem)', lineHeight: 1.12 }}
+          style={{ fontSize: 'clamp(0.85rem, 4vw, 4rem)', lineHeight: 1.1 }}
         >
           <motion.span
             initial="hidden"
@@ -61,7 +69,7 @@ export function Hero() {
               <React.Fragment key={i}>
                 <span className="inline-block overflow-hidden py-[0.04em]">
                   <motion.span
-                    className={`inline-block${i >= 3 ? ' text-leaf' : ''}`}
+                    className={SHEEN}
                     variants={{
                       hidden: { y: '110%', opacity: 0 },
                       visible: {
