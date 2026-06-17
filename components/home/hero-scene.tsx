@@ -38,7 +38,7 @@ const clamp01 = (t: number) => Math.min(1, Math.max(0, t))
  * Wheat field — instanced crossed quads textured with a wheat stalk,
  * swaying on the same wind + growth shader the grass used.
  * ------------------------------------------------------------------ */
-const WHEAT_COUNT = 2600
+const WHEAT_COUNT = 3600
 
 // One realistic wheat stalk drawn onto a transparent canvas: straw stem,
 // a two-row grain ear of overlapping kernels, and fine awns fanning up.
@@ -210,8 +210,10 @@ function WheatField({ animate }: { animate: boolean }) {
     if (!mesh) return
     const dummy = new THREE.Object3D()
     for (let i = 0; i < WHEAT_COUNT; i++) {
-      const x = THREE.MathUtils.randFloatSpread(27)
-      const z = -13 + Math.random() * 16
+      const x = THREE.MathUtils.randFloatSpread(30)
+      // Extend the field toward the camera (was -13..+3) so it fills the near
+      // foreground instead of leaving a big bare-soil gap on tall phone screens.
+      const z = -13 + Math.random() * 20
       const h = 0.9 + Math.random() * 0.7
       const w = 0.7 + Math.random() * 0.5
       dummy.position.set(x, 0, z)
@@ -652,12 +654,14 @@ function ResponsiveCamera() {
     const t = THREE.MathUtils.clamp((0.85 - aspect) / (0.85 - 0.5), 0, 1)
     camera.position.set(
       0,
-      THREE.MathUtils.lerp(3.2, 4.2, t),
-      THREE.MathUtils.lerp(12, 18, t),
+      THREE.MathUtils.lerp(3.2, 3.9, t),
+      THREE.MathUtils.lerp(12, 16.5, t),
     )
     camera.fov = THREE.MathUtils.lerp(42, 58, t)
     camera.updateProjectionMatrix()
-    camera.lookAt(0, THREE.MathUtils.lerp(2.5, 3.9, t), -2)
+    // Aim higher as the screen gets taller so the bare-soil foreground drops
+    // below the frame (less brown gap under the wheat on phones).
+    camera.lookAt(0, THREE.MathUtils.lerp(2.5, 4.5, t), -2)
   }, [camera, size])
   return null
 }
