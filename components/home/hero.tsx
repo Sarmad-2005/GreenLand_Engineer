@@ -13,7 +13,7 @@ const WORDS = ['Innovative', 'Machinery', '—', 'Progressive', 'Farmers']
 // motion-reduce keeps it static for users who prefer reduced motion.
 const SHEEN =
   'inline-block bg-clip-text text-transparent [-webkit-text-fill-color:transparent] ' +
-  '[background-image:linear-gradient(110deg,#226b3a_0%,#38a05c_22%,#f1df1d_50%,#38a05c_78%,#226b3a_100%)] ' +
+  '[background-image:linear-gradient(110deg,#1f6a39_0%,#2f8a4d_28%,#74cf89_47%,#cdb43a_50%,#74cf89_53%,#2f8a4d_72%,#1f6a39_100%)] ' +
   '[background-size:200%_auto] [background-position:0%_center] ' +
   'animate-[hero-sheen_6s_linear_infinite] motion-reduce:animate-none'
 
